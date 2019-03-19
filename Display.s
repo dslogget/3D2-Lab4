@@ -1,7 +1,5 @@
 	AREA	DisplayCode, CODE, READONLY
-	IMPORT IO1DIR
-	IMPORT IO1CLR
-	IMPORT IO1SET
+	INCLUDE REG_DEFS.s
 		
 	; Display 4 LSbs the value of R1 to the display
 	EXPORT Display

@@ -4,13 +4,8 @@
 ARM Macro Assembler    Page 1 
 
 
-    1 00000000                 AREA             AsmTemplate, CODE, READONLY
-    2 00000000                 IMPORT           main
-    3 00000000         
-    4 00000000         
-    5 00000000         ; (c) Mike Brady, 2011 -- 2019.
-    6 00000000                 EXPORT           start
-    7 00000000                 INCLUDE          REG_DEFS.s
+    1 00000000                 AREA             INTHANDLER, CODE, READONLY
+    2 00000000                 GET              REG_DEFS.S
     1 00000000                 AREA             REG_DEFS, CODE, READONLY
     2 00000000         
     3 00000000         
@@ -63,17 +58,17 @@ ARM Macro Assembler    Page 1
    27 00000000 E000401C 
                        T0MR1   EQU              0xE000401C
    28 00000000 E0004020 
+                       T0MR2   EQU              0xE0004020
+   29 00000000 E0004024 
+                       T0MR3   EQU              0xE0004024
+   30 00000000 E0004028 
+                       T0CCR   EQU              0xE0004028
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-                       T0MR2   EQU              0xE0004020
-   29 00000000 E0004024 
-                       T0MR3   EQU              0xE0004024
-   30 00000000 E0004028 
-                       T0CCR   EQU              0xE0004028
    31 00000000 E000402C 
                        T0CR0   EQU              0xE000402C
    32 00000000 E0004030 
@@ -124,98 +119,91 @@ ARM Macro Assembler    Page 2
    55 00000000         
    56 00000000         
    57 00000000                 END
-    8 00000000                 IMPORT           Display
-    9 00000000                 IMPORT           CLKINIT
-   10 00000000                 IMPORT           INTHAND
-   11 00000000                 IMPORT           MSCNT
+    3 00000000                 EXPORT           INTHAND
+    4 00000000                 EXPORT           MSCNT
+    5 00000000                 EXPORT           SCNT
+    6 00000000                 EXPORT           MICNT
+    7 00000000         
+    8 00000000         
+    9 00000000         INTHAND
+   10 00000000 E24EE004        SUB              LR, LR, #4
+   11 00000004 E92D401F        STMFD            SP!, {R0 - R4, lr}
 
 
 
 ARM Macro Assembler    Page 3 
 
 
-   12 00000000                 IMPORT           SCNT
-   13 00000000                 IMPORT           MICNT
-   14 00000000         
-   15 00000000         ;R=17 B=18 G=21
-   16 00000000         
-   17 00000000         ;Main loop
-   18 00000000         start
-   19 00000000 EBFFFFFE        BL               CLKINIT
-   20 00000004 E59F0070        LDR              R0, =VICDEFVECTADDR
-   21 00000008 E59F1070        LDR              R1, =INTHAND
-   22 0000000C E5801000        STR              R1, [R0]
-   23 00000010 E59F006C        LDR              R0, =VICINTENABLE
-   24 00000014 E3A01010        LDR              R1, =(2_1 << 4)
-   25 00000018 E5801000        STR              R1, [R0]
-   26 0000001C E59F0064        LDR              R0, =SCNT
-   27 00000020 E3A02000        LDR              R2, =0
-   28 00000024 E3A03008        LDR              R3, =8
-   29 00000028 E59F405C        LDR              R4, =LUT
-   30 0000002C E3A02826        LDR              R2, =0x260000
-   31 00000030 E59F5058        LDR              R5, =IO0DIR
-   32 00000034 E5852000        STR              R2, [R5]
-   33 00000038         
-   34 00000038 E59F5054        LDR              R5, =IO0CLR
-   35 0000003C E59F6054        LDR              R6, =IO0SET
-   36 00000040         
-   37 00000040         
-   38 00000040         LP
-   39 00000040 E5D01000        LDRB             R1, [R0]
-   40 00000044 E1520001        CMP              R2, R1
-   41 00000048 E1A02001        MOV              R2, R1
-   42 0000004C 0AFFFFFB        BEQ              LP
-   43 00000050 EBFFFFFE        BL               Display
-   44 00000054         
-   45 00000054 E5867000        STR              R7, [R6]
-   46 00000058 E7947003        LDR              R7, [R4, R3]
-   47 0000005C E5857000        STR              R7, [R5]
-   48 00000060         
-   49 00000060 E2533004        SUBS             r3, #4
-   50 00000064 33A03008        LDRCC            r3, =8
-   51 00000068 EAFFFFF4        B                LP
-   52 0000006C         
-   53 0000006C 00020000 
-                       LUT     DCD              1<<17
-   54 00000070 00200000        DCD              1<<21
-   55 00000074 00040000        DCD              1<<18
-   56 00000078         
-   57 00000078         
-   58 00000078 EAFFFFFE 
-                       stop    B                stop
-   59 0000007C                 END
-              FFFFF034 
+   12 00000008 E59F0080        LDR              R0, =T0IR
+   13 0000000C E5901000        LDR              R1, [R0]
+   14 00000010 E3110001        TST              R1, #2_1
+   15 00000014 13A02001        LDRNE            R2, =2_1
+   16 00000018 15802000        STRNE            R2, [R0]
+   17 0000001C 1B000003        BLNE             TIMERMATCH0INT
+   18 00000020 E59F006C        LDR              R0, =VICVECTADDR
+   19 00000024 E3A01000        LDR              R1, =0
+   20 00000028 E5801000        STR              R1, [R0]
+   21 0000002C E8FD801F        LDMFD            SP!, {R0 - R4,pc}^
+   22 00000030         
+   23 00000030         
+   24 00000030         
+   25 00000030         TIMERMATCH0INT
+   26 00000030 E59F0060        LDR              R0, =MSCNT
+   27 00000034 E5901000        LDR              R1, [R0]
+   28 00000038 E59F205C        LDR              R2, =0xFFFF
+   29 0000003C E0022001        AND              R2, R2, R1
+   30 00000040 E201380F        AND              R3, R1, #(0xF << 16)
+   31 00000044 E201440F        AND              R4, R1, #(0XF << 24)
+   32 00000048 E3A01000        LDR              R1, =0
+   33 0000004C         
+   34 0000004C E2822005        ADD              R2, #5
+   35 00000050 E3520FFA        CMP              R2, #1000
+   36 00000054 22422FFA        SUBHS            R2, #1000
+   37 00000058 22833801        ADDHS            R3, #(1 << 16)
+   38 0000005C E353070F        CMP              R3, #(60 << 16)
+   39 00000060 2243370F        SUBHS            R3, #(60 << 16)
+   40 00000064 22844401        ADDHS            R4, #(1 << 24)
+   41 00000068 E35404FF        CMP              R4, #(0xFF << 24)
+   42 0000006C 22444401        SUBHS            R4, #(1 << 24)
+   43 00000070         
+   44 00000070 E1811002        ORR              R1, R1, R2
+   45 00000074 E1811003        ORR              R1, R1, R3
+   46 00000078 E1811004        ORR              R1, R1, R4
+   47 0000007C         
+   48 0000007C E5801000        STR              R1, [R0]
+   49 00000080 E59F000C        LDR              R0, =VICVECTADDR
+   50 00000084 E3A01000        LDR              R1, =0
+   51 00000088 E5801000        STR              R1, [R0]
+   52 0000008C E8FD801F        LDMFD            SP!, {R0 - R4, pc}^
+   53 00000090         
+   54 00000090 E0004000 
+              FFFFF030 
               00000000 
-              FFFFF010 
-              00000000 
-              00000000 
-              E0028008 
-              E002800C 
-              E0028004 
-Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\a
-
-
-
-ARM Macro Assembler    Page 4 
-
-
-pp.d -o.\app.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Ke
-il_v5\ARM\Inc\Philips --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VE
-RSION SETA 516" --list=.\listings\app.lst App.s
+              0000FFFF         AREA             TIMERSTORAGE, DATA, READWRITE
+   55 00000000 00 00   MSCNT   DCW              0
+   56 00000002 00      SCNT    DCB              0
+   57 00000003 00      MICNT   DCB              0
+   58 00000004         
+   59 00000004                 END
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=".\
+interrupt handler.d" -o".\interrupt handler.o" -IC:\Keil_v5\ARM\RV31\INC -IC:\K
+eil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\Inc\Philips --predefine="__MICROLIB S
+ETA 1" --predefine="__UVISION_VERSION SETA 516" --list=.\listings\interrupt han
+dler.lst "Interrupt Handler.s"
 
 
 
 ARM Macro Assembler    Page 1 Alphabetic symbol ordering
 Relocatable symbols
 
-AsmTemplate 00000000
+INTHANDLER 00000000
 
-Symbol: AsmTemplate
+Symbol: INTHANDLER
    Definitions
-      At line 1 in file App.s
+      At line 1 in file Interrupt
    Uses
       None
-Comment: AsmTemplate unused
+Comment: INTHANDLER unused
 1 symbol
 
 
@@ -223,48 +211,71 @@ Comment: AsmTemplate unused
 ARM Macro Assembler    Page 1 Alphabetic symbol ordering
 Relocatable symbols
 
-LP 00000040
+INTHAND 00000000
 
-Symbol: LP
+Symbol: INTHAND
    Definitions
-      At line 38 in file App.s
+      At line 9 in file Interrupt
    Uses
-      At line 42 in file App.s
-      At line 51 in file App.s
-
-LUT 0000006C
-
-Symbol: LUT
-   Definitions
-      At line 53 in file App.s
-   Uses
-      At line 29 in file App.s
-Comment: LUT used once
+      At line 3 in file Interrupt
+Comment: INTHAND used once
 REG_DEFS 00000000
 
 Symbol: REG_DEFS
    Definitions
-      At line 1 in file REG_DEFS.s
+      At line 1 in file REG_DEFS.S
    Uses
       None
 Comment: REG_DEFS unused
-start 00000000
+TIMERMATCH0INT 00000030
 
-Symbol: start
+Symbol: TIMERMATCH0INT
    Definitions
-      At line 18 in file App.s
+      At line 25 in file Interrupt
    Uses
-      At line 6 in file App.s
-Comment: start used once
-stop 00000078
+      At line 17 in file Interrupt
+Comment: TIMERMATCH0INT used once
+3 symbols
 
-Symbol: stop
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+MICNT 00000003
+
+Symbol: MICNT
    Definitions
-      At line 58 in file App.s
+      At line 57 in file Interrupt
    Uses
-      At line 58 in file App.s
-Comment: stop used once
-5 symbols
+      At line 6 in file Interrupt
+Comment: MICNT used once
+MSCNT 00000000
+
+Symbol: MSCNT
+   Definitions
+      At line 55 in file Interrupt
+   Uses
+      At line 4 in file Interrupt
+      At line 26 in file Interrupt
+
+SCNT 00000002
+
+Symbol: SCNT
+   Definitions
+      At line 56 in file Interrupt
+   Uses
+      At line 5 in file Interrupt
+Comment: SCNT used once
+TIMERSTORAGE 00000000
+
+Symbol: TIMERSTORAGE
+   Definitions
+      At line 54 in file Interrupt
+   Uses
+      None
+Comment: TIMERSTORAGE unused
+4 symbols
 
 
 
@@ -275,23 +286,23 @@ IO0CLR E002800C
 
 Symbol: IO0CLR
    Definitions
-      At line 8 in file REG_DEFS.s
+      At line 8 in file REG_DEFS.S
    Uses
-      At line 34 in file App.s
-Comment: IO0CLR used once
+      None
+Comment: IO0CLR unused
 IO0DIR E0028008
 
 Symbol: IO0DIR
    Definitions
-      At line 7 in file REG_DEFS.s
+      At line 7 in file REG_DEFS.S
    Uses
-      At line 31 in file App.s
-Comment: IO0DIR used once
+      None
+Comment: IO0DIR unused
 IO0PIN E0028000
 
 Symbol: IO0PIN
    Definitions
-      At line 5 in file REG_DEFS.s
+      At line 5 in file REG_DEFS.S
    Uses
       None
 Comment: IO0PIN unused
@@ -299,15 +310,15 @@ IO0SET E0028004
 
 Symbol: IO0SET
    Definitions
-      At line 6 in file REG_DEFS.s
+      At line 6 in file REG_DEFS.S
    Uses
-      At line 35 in file App.s
-Comment: IO0SET used once
+      None
+Comment: IO0SET unused
 IO1CLR E002801C
 
 Symbol: IO1CLR
    Definitions
-      At line 12 in file REG_DEFS.s
+      At line 12 in file REG_DEFS.S
    Uses
       None
 Comment: IO1CLR unused
@@ -315,7 +326,7 @@ IO1DIR E0028018
 
 Symbol: IO1DIR
    Definitions
-      At line 11 in file REG_DEFS.s
+      At line 11 in file REG_DEFS.S
    Uses
       None
 Comment: IO1DIR unused
@@ -323,7 +334,7 @@ IO1PIN E0028010
 
 Symbol: IO1PIN
    Definitions
-      At line 9 in file REG_DEFS.s
+      At line 9 in file REG_DEFS.S
    Uses
       None
 Comment: IO1PIN unused
@@ -337,7 +348,7 @@ ARM Macro Assembler    Page 2 Alphabetic symbol ordering
 Absolute symbols
 
    Definitions
-      At line 10 in file REG_DEFS.s
+      At line 10 in file REG_DEFS.S
    Uses
       None
 Comment: IO1SET unused
@@ -345,7 +356,7 @@ T0CCR E0004028
 
 Symbol: T0CCR
    Definitions
-      At line 30 in file REG_DEFS.s
+      At line 30 in file REG_DEFS.S
    Uses
       None
 Comment: T0CCR unused
@@ -353,7 +364,7 @@ T0CR0 E000402C
 
 Symbol: T0CR0
    Definitions
-      At line 31 in file REG_DEFS.s
+      At line 31 in file REG_DEFS.S
    Uses
       None
 Comment: T0CR0 unused
@@ -361,7 +372,7 @@ T0CR1 E0004030
 
 Symbol: T0CR1
    Definitions
-      At line 32 in file REG_DEFS.s
+      At line 32 in file REG_DEFS.S
    Uses
       None
 Comment: T0CR1 unused
@@ -369,7 +380,7 @@ T0CR2 E0004034
 
 Symbol: T0CR2
    Definitions
-      At line 33 in file REG_DEFS.s
+      At line 33 in file REG_DEFS.S
    Uses
       None
 Comment: T0CR2 unused
@@ -377,7 +388,7 @@ T0CR3 E0004038
 
 Symbol: T0CR3
    Definitions
-      At line 34 in file REG_DEFS.s
+      At line 34 in file REG_DEFS.S
    Uses
       None
 Comment: T0CR3 unused
@@ -385,7 +396,7 @@ T0CTCR E0004070
 
 Symbol: T0CTCR
    Definitions
-      At line 36 in file REG_DEFS.s
+      At line 36 in file REG_DEFS.S
    Uses
       None
 Comment: T0CTCR unused
@@ -393,7 +404,7 @@ T0EMR E000403C
 
 Symbol: T0EMR
    Definitions
-      At line 35 in file REG_DEFS.s
+      At line 35 in file REG_DEFS.S
    Uses
 
 
@@ -407,15 +418,15 @@ T0IR E0004000
 
 Symbol: T0IR
    Definitions
-      At line 20 in file REG_DEFS.s
+      At line 20 in file REG_DEFS.S
    Uses
-      None
-Comment: T0IR unused
+      At line 12 in file Interrupt
+Comment: T0IR used once
 T0MCR E0004014
 
 Symbol: T0MCR
    Definitions
-      At line 25 in file REG_DEFS.s
+      At line 25 in file REG_DEFS.S
    Uses
       None
 Comment: T0MCR unused
@@ -423,7 +434,7 @@ T0MR0 E0004018
 
 Symbol: T0MR0
    Definitions
-      At line 26 in file REG_DEFS.s
+      At line 26 in file REG_DEFS.S
    Uses
       None
 Comment: T0MR0 unused
@@ -431,7 +442,7 @@ T0MR1 E000401C
 
 Symbol: T0MR1
    Definitions
-      At line 27 in file REG_DEFS.s
+      At line 27 in file REG_DEFS.S
    Uses
       None
 Comment: T0MR1 unused
@@ -439,7 +450,7 @@ T0MR2 E0004020
 
 Symbol: T0MR2
    Definitions
-      At line 28 in file REG_DEFS.s
+      At line 28 in file REG_DEFS.S
    Uses
       None
 Comment: T0MR2 unused
@@ -447,7 +458,7 @@ T0MR3 E0004024
 
 Symbol: T0MR3
    Definitions
-      At line 29 in file REG_DEFS.s
+      At line 29 in file REG_DEFS.S
    Uses
       None
 Comment: T0MR3 unused
@@ -455,7 +466,7 @@ T0PC E0004010
 
 Symbol: T0PC
    Definitions
-      At line 24 in file REG_DEFS.s
+      At line 24 in file REG_DEFS.S
    Uses
       None
 Comment: T0PC unused
@@ -469,7 +480,7 @@ Absolute symbols
 
 Symbol: T0PR
    Definitions
-      At line 23 in file REG_DEFS.s
+      At line 23 in file REG_DEFS.S
    Uses
       None
 Comment: T0PR unused
@@ -477,7 +488,7 @@ T0TC E0004008
 
 Symbol: T0TC
    Definitions
-      At line 22 in file REG_DEFS.s
+      At line 22 in file REG_DEFS.S
    Uses
       None
 Comment: T0TC unused
@@ -485,7 +496,7 @@ T0TCR E0004004
 
 Symbol: T0TCR
    Definitions
-      At line 21 in file REG_DEFS.s
+      At line 21 in file REG_DEFS.S
    Uses
       None
 Comment: T0TCR unused
@@ -493,7 +504,7 @@ T1CCR E0008028
 
 Symbol: T1CCR
    Definitions
-      At line 48 in file REG_DEFS.s
+      At line 48 in file REG_DEFS.S
    Uses
       None
 Comment: T1CCR unused
@@ -501,7 +512,7 @@ T1CR0 E000802C
 
 Symbol: T1CR0
    Definitions
-      At line 49 in file REG_DEFS.s
+      At line 49 in file REG_DEFS.S
    Uses
       None
 Comment: T1CR0 unused
@@ -509,7 +520,7 @@ T1CR1 E0008030
 
 Symbol: T1CR1
    Definitions
-      At line 50 in file REG_DEFS.s
+      At line 50 in file REG_DEFS.S
    Uses
       None
 Comment: T1CR1 unused
@@ -517,7 +528,7 @@ T1CR2 E0008034
 
 Symbol: T1CR2
    Definitions
-      At line 51 in file REG_DEFS.s
+      At line 51 in file REG_DEFS.S
    Uses
       None
 Comment: T1CR2 unused
@@ -531,7 +542,7 @@ Symbol: T1CR3
 ARM Macro Assembler    Page 5 Alphabetic symbol ordering
 Absolute symbols
 
-      At line 52 in file REG_DEFS.s
+      At line 52 in file REG_DEFS.S
    Uses
       None
 Comment: T1CR3 unused
@@ -539,7 +550,7 @@ T1CTCR E0008070
 
 Symbol: T1CTCR
    Definitions
-      At line 54 in file REG_DEFS.s
+      At line 54 in file REG_DEFS.S
    Uses
       None
 Comment: T1CTCR unused
@@ -547,7 +558,7 @@ T1EMR E000803C
 
 Symbol: T1EMR
    Definitions
-      At line 53 in file REG_DEFS.s
+      At line 53 in file REG_DEFS.S
    Uses
       None
 Comment: T1EMR unused
@@ -555,7 +566,7 @@ T1IR E0008000
 
 Symbol: T1IR
    Definitions
-      At line 38 in file REG_DEFS.s
+      At line 38 in file REG_DEFS.S
    Uses
       None
 Comment: T1IR unused
@@ -563,7 +574,7 @@ T1MCR E0008014
 
 Symbol: T1MCR
    Definitions
-      At line 43 in file REG_DEFS.s
+      At line 43 in file REG_DEFS.S
    Uses
       None
 Comment: T1MCR unused
@@ -571,7 +582,7 @@ T1MR0 E0008018
 
 Symbol: T1MR0
    Definitions
-      At line 44 in file REG_DEFS.s
+      At line 44 in file REG_DEFS.S
    Uses
       None
 Comment: T1MR0 unused
@@ -579,7 +590,7 @@ T1MR1 E000801C
 
 Symbol: T1MR1
    Definitions
-      At line 45 in file REG_DEFS.s
+      At line 45 in file REG_DEFS.S
    Uses
       None
 Comment: T1MR1 unused
@@ -587,7 +598,7 @@ T1MR2 E0008020
 
 Symbol: T1MR2
    Definitions
-      At line 46 in file REG_DEFS.s
+      At line 46 in file REG_DEFS.S
    Uses
       None
 
@@ -601,7 +612,7 @@ T1MR3 E0008024
 
 Symbol: T1MR3
    Definitions
-      At line 47 in file REG_DEFS.s
+      At line 47 in file REG_DEFS.S
    Uses
       None
 Comment: T1MR3 unused
@@ -609,7 +620,7 @@ T1PC E0008010
 
 Symbol: T1PC
    Definitions
-      At line 42 in file REG_DEFS.s
+      At line 42 in file REG_DEFS.S
    Uses
       None
 Comment: T1PC unused
@@ -617,7 +628,7 @@ T1PR E000800C
 
 Symbol: T1PR
    Definitions
-      At line 41 in file REG_DEFS.s
+      At line 41 in file REG_DEFS.S
    Uses
       None
 Comment: T1PR unused
@@ -625,7 +636,7 @@ T1TC E0008008
 
 Symbol: T1TC
    Definitions
-      At line 40 in file REG_DEFS.s
+      At line 40 in file REG_DEFS.S
    Uses
       None
 Comment: T1TC unused
@@ -633,7 +644,7 @@ T1TCR E0008004
 
 Symbol: T1TCR
    Definitions
-      At line 39 in file REG_DEFS.s
+      At line 39 in file REG_DEFS.S
    Uses
       None
 Comment: T1TCR unused
@@ -641,18 +652,18 @@ VICDEFVECTADDR FFFFF034
 
 Symbol: VICDEFVECTADDR
    Definitions
-      At line 18 in file REG_DEFS.s
+      At line 18 in file REG_DEFS.S
    Uses
-      At line 20 in file App.s
-Comment: VICDEFVECTADDR used once
+      None
+Comment: VICDEFVECTADDR unused
 VICINTENABLE FFFFF010
 
 Symbol: VICINTENABLE
    Definitions
-      At line 17 in file REG_DEFS.s
+      At line 17 in file REG_DEFS.S
    Uses
-      At line 23 in file App.s
-Comment: VICINTENABLE used once
+      None
+Comment: VICINTENABLE unused
 VICINTSELECT FFFFF00C
 
 
@@ -663,7 +674,7 @@ Absolute symbols
 
 Symbol: VICINTSELECT
    Definitions
-      At line 16 in file REG_DEFS.s
+      At line 16 in file REG_DEFS.S
    Uses
       None
 Comment: VICINTSELECT unused
@@ -671,72 +682,10 @@ VICVECTADDR FFFFF030
 
 Symbol: VICVECTADDR
    Definitions
-      At line 15 in file REG_DEFS.s
+      At line 15 in file REG_DEFS.S
    Uses
-      None
-Comment: VICVECTADDR unused
+      At line 18 in file Interrupt
+      At line 49 in file Interrupt
+
 46 symbols
-
-
-
-ARM Macro Assembler    Page 1 Alphabetic symbol ordering
-External symbols
-
-CLKINIT 00000000
-
-Symbol: CLKINIT
-   Definitions
-      At line 9 in file App.s
-   Uses
-      At line 19 in file App.s
-Comment: CLKINIT used once
-Display 00000000
-
-Symbol: Display
-   Definitions
-      At line 8 in file App.s
-   Uses
-      At line 43 in file App.s
-Comment: Display used once
-INTHAND 00000000
-
-Symbol: INTHAND
-   Definitions
-      At line 10 in file App.s
-   Uses
-      At line 21 in file App.s
-Comment: INTHAND used once
-MICNT 00000000
-
-Symbol: MICNT
-   Definitions
-      At line 13 in file App.s
-   Uses
-      None
-Comment: MICNT unused
-MSCNT 00000000
-
-Symbol: MSCNT
-   Definitions
-      At line 11 in file App.s
-   Uses
-      None
-Comment: MSCNT unused
-SCNT 00000000
-
-Symbol: SCNT
-   Definitions
-      At line 12 in file App.s
-   Uses
-      At line 26 in file App.s
-Comment: SCNT used once
-main 00000000
-
-Symbol: main
-   Definitions
-      At line 2 in file App.s
-   Uses
-      None
-Comment: main unused
-7 symbols
-393 symbols in table
+388 symbols in table
