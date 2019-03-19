@@ -3,7 +3,7 @@
 	EXPORT CLKINIT
 	
 CLKINIT
-	STMFD	 SP!, 	{R0, R1, LR}
+	STMFD	 SP!, 	{R0 - R1, LR}
 	LDR R0, =T0TCR
 	LDR R1, =0x00000001
 	STR	R1, [R0]
@@ -25,8 +25,9 @@ CLKINIT
 	
 	LDR R0, =T0MCR
 	LDR R1, =(0x00000003)
+	STR R1, [R0]
 	
 
-	LDMFD	SP!, {PC}
+	LDMFD	SP!, {R0 - R1, PC}
 	
 	END

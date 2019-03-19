@@ -424,6 +424,11 @@
               <FileType>2</FileType>
               <FilePath>.\Clock-init.s</FilePath>
             </File>
+            <File>
+              <FileName>Interrupt Handler.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\Interrupt Handler.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

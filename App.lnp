@@ -1,6 +1,7 @@
 --cpu ARM7TDMI
 ".\app.o"
 ".\clock-init.o"
+".\interrupt handler.o"
 ".\display.o"
 ".\EA-LPC2138-EDU-ASM.lib"
 ".\reg_defs.o"

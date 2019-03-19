@@ -31,85 +31,94 @@ ARM Macro Assembler    Page 1
    15 00000000 FFFFF030 
                        VICVECTADDR
                                EQU              0xFFFFF030
-   16 00000000         
-   17 00000000 E0004000 
+   16 00000000 FFFFF00C 
+                       VICINTSELECT
+                               EQU              0xFFFFF00C
+   17 00000000 FFFFF010 
+                       VICINTENABLE
+                               EQU              0xFFFFF010
+   18 00000000 FFFFF034 
+                       VICDEFVECTADDR
+                               EQU              0xFFFFF034
+   19 00000000         
+   20 00000000 E0004000 
                        T0IR    EQU              0xE0004000
-   18 00000000 E0004004 
+   21 00000000 E0004004 
                        T0TCR   EQU              0xE0004004
-   19 00000000 E0004008 
+   22 00000000 E0004008 
                        T0TC    EQU              0xE0004008
-   20 00000000 E000400C 
+   23 00000000 E000400C 
                        T0PR    EQU              0xE000400C
-   21 00000000 E0004010 
+   24 00000000 E0004010 
                        T0PC    EQU              0xE0004010
-   22 00000000 E0004014 
+   25 00000000 E0004014 
                        T0MCR   EQU              0xE0004014
-   23 00000000 E0004018 
+   26 00000000 E0004018 
                        T0MR0   EQU              0xE0004018
-   24 00000000 E000401C 
+   27 00000000 E000401C 
                        T0MR1   EQU              0xE000401C
-   25 00000000 E0004020 
+   28 00000000 E0004020 
                        T0MR2   EQU              0xE0004020
-   26 00000000 E0004024 
+   29 00000000 E0004024 
                        T0MR3   EQU              0xE0004024
-   27 00000000 E0004028 
+   30 00000000 E0004028 
                        T0CCR   EQU              0xE0004028
-   28 00000000 E000402C 
-                       T0CR0   EQU              0xE000402C
-   29 00000000 E0004030 
-                       T0CR1   EQU              0xE0004030
-   30 00000000 E0004034 
-                       T0CR2   EQU              0xE0004034
-   31 00000000 E0004038 
-                       T0CR3   EQU              0xE0004038
-   32 00000000 E000403C 
 
 
 
 ARM Macro Assembler    Page 2 
 
 
+   31 00000000 E000402C 
+                       T0CR0   EQU              0xE000402C
+   32 00000000 E0004030 
+                       T0CR1   EQU              0xE0004030
+   33 00000000 E0004034 
+                       T0CR2   EQU              0xE0004034
+   34 00000000 E0004038 
+                       T0CR3   EQU              0xE0004038
+   35 00000000 E000403C 
                        T0EMR   EQU              0xE000403C
-   33 00000000 E0004070 
+   36 00000000 E0004070 
                        T0CTCR  EQU              0xE0004070
-   34 00000000         
-   35 00000000 E0008000 
+   37 00000000         
+   38 00000000 E0008000 
                        T1IR    EQU              0xE0008000
-   36 00000000 E0008004 
+   39 00000000 E0008004 
                        T1TCR   EQU              0xE0008004
-   37 00000000 E0008008 
+   40 00000000 E0008008 
                        T1TC    EQU              0xE0008008
-   38 00000000 E000800C 
+   41 00000000 E000800C 
                        T1PR    EQU              0xE000800C
-   39 00000000 E0008010 
+   42 00000000 E0008010 
                        T1PC    EQU              0xE0008010
-   40 00000000 E0008014 
+   43 00000000 E0008014 
                        T1MCR   EQU              0xE0008014
-   41 00000000 E0008018 
+   44 00000000 E0008018 
                        T1MR0   EQU              0xE0008018
-   42 00000000 E000801C 
+   45 00000000 E000801C 
                        T1MR1   EQU              0xE000801C
-   43 00000000 E0008020 
+   46 00000000 E0008020 
                        T1MR2   EQU              0xE0008020
-   44 00000000 E0008024 
+   47 00000000 E0008024 
                        T1MR3   EQU              0xE0008024
-   45 00000000 E0008028 
+   48 00000000 E0008028 
                        T1CCR   EQU              0xE0008028
-   46 00000000 E000802C 
+   49 00000000 E000802C 
                        T1CR0   EQU              0xE000802C
-   47 00000000 E0008030 
+   50 00000000 E0008030 
                        T1CR1   EQU              0xE0008030
-   48 00000000 E0008034 
+   51 00000000 E0008034 
                        T1CR2   EQU              0xE0008034
-   49 00000000 E0008038 
+   52 00000000 E0008038 
                        T1CR3   EQU              0xE0008038
-   50 00000000 E000803C 
+   53 00000000 E000803C 
                        T1EMR   EQU              0xE000803C
-   51 00000000 E0008070 
+   54 00000000 E0008070 
                        T1CTCR  EQU              0xE0008070
-   52 00000000         
-   53 00000000         
-   54 00000000                 END
+   55 00000000         
+   56 00000000         
+   57 00000000                 END
     3 00000000         
     4 00000000         ; Display 4 LSbs the value of R1 to the display
     5 00000000                 EXPORT           Display
@@ -119,6 +128,12 @@ ARM Macro Assembler    Page 2
                                                             l registers that do
                                                             n't return a value
     9 00000004 E3A0280F        LDR              R2, =(2_1111 << 16)
+
+
+
+ARM Macro Assembler    Page 3 
+
+
    10 00000008 E59F0040        LDR              R0, =IO1DIR
    11 0000000C E5802000        STR              R2, [R0]
    12 00000010 E3A02000        LDR              R2, =0
@@ -128,12 +143,6 @@ ARM Macro Assembler    Page 2
    16 00000020 13822002        ORRNE            R2, #2_0010
    17 00000024 E3110002        TST              R1, #2_0010
    18 00000028 13822004        ORRNE            R2, #2_0100
-
-
-
-ARM Macro Assembler    Page 3 
-
-
    19 0000002C E3110001        TST              R1, #2_0001
    20 00000030 13822008        ORRNE            R2, #2_1000
    21 00000034 E59F0018        LDR              R0, =IO1SET
@@ -151,9 +160,8 @@ ARM Macro Assembler    Page 3
               E002801C 
 Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\d
 isplay.d -o.\display.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include
- -IC:\Keil_v5\ARM\Inc\Philips --predefine="__EVAL SETA 1" --predefine="__MICROL
-IB SETA 1" --predefine="__UVISION_VERSION SETA 516" --list=.\listings\display.l
-st Display.s
+ -IC:\Keil_v5\ARM\Inc\Philips --predefine="__MICROLIB SETA 1" --predefine="__UV
+ISION_VERSION SETA 516" --list=.\listings\display.lst Display.s
 
 
 
@@ -272,7 +280,7 @@ T0CCR E0004028
 
 Symbol: T0CCR
    Definitions
-      At line 27 in file REG_DEFS.s
+      At line 30 in file REG_DEFS.s
    Uses
       None
 Comment: T0CCR unused
@@ -280,7 +288,7 @@ T0CR0 E000402C
 
 Symbol: T0CR0
    Definitions
-      At line 28 in file REG_DEFS.s
+      At line 31 in file REG_DEFS.s
    Uses
       None
 Comment: T0CR0 unused
@@ -288,7 +296,7 @@ T0CR1 E0004030
 
 Symbol: T0CR1
    Definitions
-      At line 29 in file REG_DEFS.s
+      At line 32 in file REG_DEFS.s
    Uses
       None
 Comment: T0CR1 unused
@@ -296,7 +304,7 @@ T0CR2 E0004034
 
 Symbol: T0CR2
    Definitions
-      At line 30 in file REG_DEFS.s
+      At line 33 in file REG_DEFS.s
    Uses
       None
 Comment: T0CR2 unused
@@ -304,7 +312,7 @@ T0CR3 E0004038
 
 Symbol: T0CR3
    Definitions
-      At line 31 in file REG_DEFS.s
+      At line 34 in file REG_DEFS.s
    Uses
       None
 Comment: T0CR3 unused
@@ -312,7 +320,7 @@ T0CTCR E0004070
 
 Symbol: T0CTCR
    Definitions
-      At line 33 in file REG_DEFS.s
+      At line 36 in file REG_DEFS.s
    Uses
       None
 Comment: T0CTCR unused
@@ -320,7 +328,7 @@ T0EMR E000403C
 
 Symbol: T0EMR
    Definitions
-      At line 32 in file REG_DEFS.s
+      At line 35 in file REG_DEFS.s
    Uses
 
 
@@ -334,7 +342,7 @@ T0IR E0004000
 
 Symbol: T0IR
    Definitions
-      At line 17 in file REG_DEFS.s
+      At line 20 in file REG_DEFS.s
    Uses
       None
 Comment: T0IR unused
@@ -342,7 +350,7 @@ T0MCR E0004014
 
 Symbol: T0MCR
    Definitions
-      At line 22 in file REG_DEFS.s
+      At line 25 in file REG_DEFS.s
    Uses
       None
 Comment: T0MCR unused
@@ -350,7 +358,7 @@ T0MR0 E0004018
 
 Symbol: T0MR0
    Definitions
-      At line 23 in file REG_DEFS.s
+      At line 26 in file REG_DEFS.s
    Uses
       None
 Comment: T0MR0 unused
@@ -358,7 +366,7 @@ T0MR1 E000401C
 
 Symbol: T0MR1
    Definitions
-      At line 24 in file REG_DEFS.s
+      At line 27 in file REG_DEFS.s
    Uses
       None
 Comment: T0MR1 unused
@@ -366,7 +374,7 @@ T0MR2 E0004020
 
 Symbol: T0MR2
    Definitions
-      At line 25 in file REG_DEFS.s
+      At line 28 in file REG_DEFS.s
    Uses
       None
 Comment: T0MR2 unused
@@ -374,7 +382,7 @@ T0MR3 E0004024
 
 Symbol: T0MR3
    Definitions
-      At line 26 in file REG_DEFS.s
+      At line 29 in file REG_DEFS.s
    Uses
       None
 Comment: T0MR3 unused
@@ -382,7 +390,7 @@ T0PC E0004010
 
 Symbol: T0PC
    Definitions
-      At line 21 in file REG_DEFS.s
+      At line 24 in file REG_DEFS.s
    Uses
       None
 Comment: T0PC unused
@@ -396,7 +404,7 @@ Absolute symbols
 
 Symbol: T0PR
    Definitions
-      At line 20 in file REG_DEFS.s
+      At line 23 in file REG_DEFS.s
    Uses
       None
 Comment: T0PR unused
@@ -404,7 +412,7 @@ T0TC E0004008
 
 Symbol: T0TC
    Definitions
-      At line 19 in file REG_DEFS.s
+      At line 22 in file REG_DEFS.s
    Uses
       None
 Comment: T0TC unused
@@ -412,7 +420,7 @@ T0TCR E0004004
 
 Symbol: T0TCR
    Definitions
-      At line 18 in file REG_DEFS.s
+      At line 21 in file REG_DEFS.s
    Uses
       None
 Comment: T0TCR unused
@@ -420,7 +428,7 @@ T1CCR E0008028
 
 Symbol: T1CCR
    Definitions
-      At line 45 in file REG_DEFS.s
+      At line 48 in file REG_DEFS.s
    Uses
       None
 Comment: T1CCR unused
@@ -428,7 +436,7 @@ T1CR0 E000802C
 
 Symbol: T1CR0
    Definitions
-      At line 46 in file REG_DEFS.s
+      At line 49 in file REG_DEFS.s
    Uses
       None
 Comment: T1CR0 unused
@@ -436,7 +444,7 @@ T1CR1 E0008030
 
 Symbol: T1CR1
    Definitions
-      At line 47 in file REG_DEFS.s
+      At line 50 in file REG_DEFS.s
    Uses
       None
 Comment: T1CR1 unused
@@ -444,7 +452,7 @@ T1CR2 E0008034
 
 Symbol: T1CR2
    Definitions
-      At line 48 in file REG_DEFS.s
+      At line 51 in file REG_DEFS.s
    Uses
       None
 Comment: T1CR2 unused
@@ -458,7 +466,7 @@ Symbol: T1CR3
 ARM Macro Assembler    Page 5 Alphabetic symbol ordering
 Absolute symbols
 
-      At line 49 in file REG_DEFS.s
+      At line 52 in file REG_DEFS.s
    Uses
       None
 Comment: T1CR3 unused
@@ -466,7 +474,7 @@ T1CTCR E0008070
 
 Symbol: T1CTCR
    Definitions
-      At line 51 in file REG_DEFS.s
+      At line 54 in file REG_DEFS.s
    Uses
       None
 Comment: T1CTCR unused
@@ -474,7 +482,7 @@ T1EMR E000803C
 
 Symbol: T1EMR
    Definitions
-      At line 50 in file REG_DEFS.s
+      At line 53 in file REG_DEFS.s
    Uses
       None
 Comment: T1EMR unused
@@ -482,7 +490,7 @@ T1IR E0008000
 
 Symbol: T1IR
    Definitions
-      At line 35 in file REG_DEFS.s
+      At line 38 in file REG_DEFS.s
    Uses
       None
 Comment: T1IR unused
@@ -490,7 +498,7 @@ T1MCR E0008014
 
 Symbol: T1MCR
    Definitions
-      At line 40 in file REG_DEFS.s
+      At line 43 in file REG_DEFS.s
    Uses
       None
 Comment: T1MCR unused
@@ -498,7 +506,7 @@ T1MR0 E0008018
 
 Symbol: T1MR0
    Definitions
-      At line 41 in file REG_DEFS.s
+      At line 44 in file REG_DEFS.s
    Uses
       None
 Comment: T1MR0 unused
@@ -506,7 +514,7 @@ T1MR1 E000801C
 
 Symbol: T1MR1
    Definitions
-      At line 42 in file REG_DEFS.s
+      At line 45 in file REG_DEFS.s
    Uses
       None
 Comment: T1MR1 unused
@@ -514,7 +522,7 @@ T1MR2 E0008020
 
 Symbol: T1MR2
    Definitions
-      At line 43 in file REG_DEFS.s
+      At line 46 in file REG_DEFS.s
    Uses
       None
 
@@ -528,7 +536,7 @@ T1MR3 E0008024
 
 Symbol: T1MR3
    Definitions
-      At line 44 in file REG_DEFS.s
+      At line 47 in file REG_DEFS.s
    Uses
       None
 Comment: T1MR3 unused
@@ -536,7 +544,7 @@ T1PC E0008010
 
 Symbol: T1PC
    Definitions
-      At line 39 in file REG_DEFS.s
+      At line 42 in file REG_DEFS.s
    Uses
       None
 Comment: T1PC unused
@@ -544,7 +552,7 @@ T1PR E000800C
 
 Symbol: T1PR
    Definitions
-      At line 38 in file REG_DEFS.s
+      At line 41 in file REG_DEFS.s
    Uses
       None
 Comment: T1PR unused
@@ -552,7 +560,7 @@ T1TC E0008008
 
 Symbol: T1TC
    Definitions
-      At line 37 in file REG_DEFS.s
+      At line 40 in file REG_DEFS.s
    Uses
       None
 Comment: T1TC unused
@@ -560,10 +568,40 @@ T1TCR E0008004
 
 Symbol: T1TCR
    Definitions
-      At line 36 in file REG_DEFS.s
+      At line 39 in file REG_DEFS.s
    Uses
       None
 Comment: T1TCR unused
+VICDEFVECTADDR FFFFF034
+
+Symbol: VICDEFVECTADDR
+   Definitions
+      At line 18 in file REG_DEFS.s
+   Uses
+      None
+Comment: VICDEFVECTADDR unused
+VICINTENABLE FFFFF010
+
+Symbol: VICINTENABLE
+   Definitions
+      At line 17 in file REG_DEFS.s
+   Uses
+      None
+Comment: VICINTENABLE unused
+VICINTSELECT FFFFF00C
+
+
+
+
+ARM Macro Assembler    Page 7 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: VICINTSELECT
+   Definitions
+      At line 16 in file REG_DEFS.s
+   Uses
+      None
+Comment: VICINTSELECT unused
 VICVECTADDR FFFFF030
 
 Symbol: VICVECTADDR
@@ -572,5 +610,5 @@ Symbol: VICVECTADDR
    Uses
       None
 Comment: VICVECTADDR unused
-43 symbols
-381 symbols in table
+46 symbols
+383 symbols in table
