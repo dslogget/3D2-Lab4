@@ -13,13 +13,13 @@ CLKINIT
 	STR R1, [R0]
 	;We want 73728 ticks to pass on the clock before inturrupting
 	;So prescale of 0
-	;Mr of 73728
+	;Mr of 73728 - 1
 	;one reset and int
 	LDR R0, =T0PR
 	LDR R1, =0x00000000
 	
 	LDR R0, =T0MR0
-	LDR R1, =73728
+	LDR R1, =73727
 	STR	R1,	[R0]
 
 	
